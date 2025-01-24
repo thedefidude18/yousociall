@@ -11,10 +11,6 @@ export default function Home() {
   const { user, setConnectModalVis } = useOrbis();
   const refreshFeedRef = useRef(null);
 
-  /**
-   * Handle post creation.
-   * Refreshes the feed after a new post is created.
-   */
   const handlePostCreated = async () => {
     if (refreshFeedRef.current) {
       await refreshFeedRef.current(); // Call the refresh function in Feed
@@ -38,14 +34,14 @@ export default function Home() {
       </Head>
 
       {/* Header */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-white">
+      <div className="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-dark-primary">
         <Header />
       </div>
 
       {/* Main Layout */}
-      <div className="flex min-h-screen bg-white pt-16">
+      <div className="flex min-h-screen bg-white dark:bg-dark-primary pt-16">
         {/* Left Sidebar */}
-        <div className="hidden md:block fixed left-0 top-16 bottom-0 w-64 bg-white border-r border-gray-200 overflow-y-auto">
+        <div className="hidden md:block fixed left-0 top-16 bottom-0 w-64 bg-white dark:bg-dark-primary border-r border-gray-100 dark:border-dark-border overflow-y-auto">
           <LeftSidebar />
         </div>
 
@@ -57,8 +53,8 @@ export default function Home() {
               {user ? (
                 <Editor onPostCreated={handlePostCreated} />
               ) : (
-                <div className="w-full text-center bg-gray-50 rounded-lg border border-gray-200 p-6">
-                  <p className="text-base text-gray-600 mb-2">
+                <div className="w-full text-center bg-gray-50 dark:bg-dark-secondary rounded-lg border border-gray-100 dark:border-dark-border p-6">
+                  <p className="text-base text-gray-600 dark:text-dark-secondary mb-2">
                     Connect your wallet to share posts
                   </p>
                   <button
@@ -83,7 +79,7 @@ export default function Home() {
         </div>
 
         {/* Right Sidebar */}
-        <div className="hidden md:block fixed right-0 top-16 bottom-0 w-80 bg-white border-l border-gray-100 overflow-y-auto">
+        <div className="hidden md:block fixed right-0 top-16 bottom-0 w-80 bg-white dark:bg-dark-primary border-l border-gray-80 dark:border-dark-border overflow-y-auto">
           <Sidebar />
         </div>
       </div>

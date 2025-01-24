@@ -13,13 +13,13 @@ module.exports = {
         'brand-hover': 'var(--brand-color-hover)',
         dark: {
           primary: '#111827',
-          secondary: '#1F2937',
+          secondary: '#030712',
           tertiary: '#374151',
         },
       },
       backgroundColor: {
-        'dark-primary': '#111827',
-        'dark-secondary': '#1F2937',
+        'dark-primary': '#010409',
+        'dark-secondary': '#030712',
         'dark-tertiary': '#374151',
       },
       textColor: {

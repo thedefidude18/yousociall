@@ -11,8 +11,8 @@ import parse from 'html-react-parser';
 import DOMPurify from 'dompurify';
 import { FaShare, FaTag, FaEthereum, FaEllipsisH } from 'react-icons/fa';
 import DonateButton from './DonateButton';
-import { isDonationEnabled } from '../config/categories';
-import useOutsideClick from '../hooks/useOutsideClick';
+import { CATEGORIES } from '../config/categories'; // Import your CATEGORIES object
+import useOutsideClick from '../hooks/useOutsideClick'; // Adjust the path as needed
 
 // Initialize TimeAgo
 if (!TimeAgo.getDefaultLocale()) {
@@ -24,6 +24,7 @@ const timeAgo = new TimeAgo('en-US');
 export default function PostItem({ post }) {
   const { orbis, user } = useOrbis();
   const [hasLiked, setHasLiked] = useState(false);
+  const [categories, setCategories] = useState([]);
   const [updatedPost, setUpdatedPost] = useState(post);
   const [showMenu, setShowMenu] = useState(false);
   const [totalDonations, setTotalDonations] = useState({
@@ -42,6 +43,21 @@ export default function PostItem({ post }) {
       checkReaction();
     }
   }, [post]);
+
+  // Convert CATEGORIES object into an array of categories
+  useEffect(() => {
+    const categoriesArray = Object.entries(CATEGORIES).map(([stream_id, content]) => ({
+      stream_id,
+      content,
+    }));
+
+    setCategories(categoriesArray);
+  }, []);
+
+  // Safely find the category name
+  const categoryName = categories.find(
+    (cat) => cat.stream_id === post.content.context
+  )?.content?.label || "General";
 
   async function loadDonations() {
     try {
@@ -216,7 +232,7 @@ export default function PostItem({ post }) {
     }).format(amount);
   };
 
-  const showDonateButton = isDonationEnabled(post.content?.context);
+  const showDonateButton = CATEGORIES[post.content?.context]?.enableDonation || false;
 
   return (
     <div className="bg-white dark:bg-dark-secondary rounded-lg shadow-sm border border-gray-200 dark:border-dark-border overflow-hidden">
@@ -242,7 +258,7 @@ export default function PostItem({ post }) {
                     <span className="text-gray-300 dark:text-gray-600">•</span>
                     <span className="inline-flex items-center text-sm text-gray-500 dark:text-gray-400">
                       <FaTag className="mr-1" />
-                      {post.content.context}
+                      {categoryName}
                     </span>
                   </>
                 )}
@@ -307,16 +323,24 @@ export default function PostItem({ post }) {
 
             <div className="mt-4 flex items-center justify-between">
               <div className="flex items-center space-x-4 text-sm text-gray-500">
-                <button
-                  className="flex items-center hover:text-gray-700"
-                  onClick={() =>
-                    (window.location.href = `/post/${post.stream_id}#comments`)
-                  }
-                  disabled={isLoading}
-                >
-                  <CommentsIcon className="mr-1" />
-                  {post.count_replies || 0} Comments
-                </button>
+              <button
+  className="flex items-center hover:text-gray-700"
+  onClick={() =>
+    (window.location.href = `/post/${post.stream_id}#comments`)
+  }
+  disabled={isLoading}
+>
+  <CommentsIcon className="mr-3" /> {/* Increased margin-right */}
+  {post.count_replies || 0} 
+</button>
+
+ <div className="flex items-center group">
+              <button className="group flex items-center space-x-2 text-gray-500 hover:text-yellow-500">
+                <span className="text-sm font-medium">
+                  {post.points || 0} Points
+                </span>
+              </button>
+            </div>
 
                 <button
                   className="flex items-center hover:text-gray-700"

@@ -4,26 +4,25 @@
 
 @layer base {
   :root {
-    --brand-color: #5d43fb;
-    --brand-color-hover: #4c33e5;
-    --bg-color: #ffffff;
+    --brand-color: #CEF848;
+    --brand-color-hover: #CEF848;
+    --bg-color: #000000;
     --border-color: #e5e7eb;
-    --text-primary: #111827;
+    --text-primary: #000000;
     --text-secondary: #4b5563;
     --text-tertiary: #6b7280;
   }
 
   .dark {
-    --bg-color: #111827;
+    --bg-color: #010409;
     --border-color: #374151;
     --text-primary: #f9fafb;
     --text-secondary: #e5e7eb;
     --text-tertiary: #d1d5db;
   }
 
-  /* Apply dark mode to the entire body */
   body {
-    @apply bg-white dark:bg-dark-primary text-gray-900 dark:text-dark-primary transition-colors duration-200;
+    @apply bg-white dark:bg-dark-primary text-gray-900 dark:text-dark-primary transition-colors duration-200 !important;
   }
 
   /* Ensure headings and paragraphs use dark mode */
@@ -49,7 +48,7 @@
   input,
   textarea,
   select {
-    @apply bg-white dark:bg-dark-secondary border border-gray-200 dark:border-dark-border text-gray-900 dark:text-dark-primary focus:ring-[var(--brand-color)] focus:border-[var(--brand-color)] dark:focus:ring-opacity-50;
+    @apply bg-white dark:bg-dark-secondary border border-gray-100 dark:border-dark-border text-gray-900 dark:text-dark-primary focus:ring-[var(--brand-color)] focus:border-[var(--brand-color)] dark:focus:ring-opacity-50;
   }
 
   /* Ensure buttons use dark mode */
