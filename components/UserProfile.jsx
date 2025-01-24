@@ -58,7 +58,6 @@ function NFT({ nft, chain, callback }) {
 
 export default function UserProfile({ details, initialData }) {
   const { orbis, user } = useOrbis();
-  const [isEditing, setIsEditing] = useState(false);
   const [profileImage, setProfileImage] = useState(details?.profile?.pfp || '/default-avatar.png');
   const [coverImage, setCoverImage] = useState(details?.profile?.cover || '/default-cover.jpg');
   const [nfts, setNfts] = useState([]);
@@ -97,54 +96,6 @@ export default function UserProfile({ details, initialData }) {
       setDonationStats(stats);
     } catch (error) {
       console.error("Error loading donation stats:", error);
-    }
-  }
-
-  async function handleImageUpload(event, type) {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    try {
-      setLoading(true);
-      const res = await orbis.uploadMedia(file);
-      
-      if (res.status === 200) {
-        const imageUrl = `https://orbis.mypinata.cloud/ipfs/${res.result}`;
-        
-        if (type === 'profile') {
-          setProfileImage(imageUrl);
-          await updateProfile({ pfp: imageUrl });
-        } else if (type === 'cover') {
-          setCoverImage(imageUrl);
-          await updateProfile({ cover: imageUrl });
-        }
-      }
-    } catch (error) {
-      console.error("Error uploading image:", error);
-      alert("Failed to upload image. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function updateProfile(updates) {
-    try {
-      const updatedProfile = {
-        ...details.profile,
-        ...updates
-      };
-
-      const res = await orbis.updateProfile(updatedProfile);
-      
-      if (res.status === 200) {
-        alert("Profile updated successfully!");
-        setIsEditing(false);
-      } else {
-        throw new Error("Failed to update profile");
-      }
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      alert("Failed to update profile. Please try again.");
     }
   }
 
@@ -271,9 +222,9 @@ export default function UserProfile({ details, initialData }) {
               </div>
               <div className="bg-gray-50 rounded-lg p-6">
                 <div className="flex items-center">
-                  <span className="text-2xl font-bold">{initialData?.posts?.length || 0}</span>
+                  <span className="text-2xl font-bold">{details?.profile?.points || 0}</span>
                 </div>
-                <p className="mt-2 text-sm text-gray-500">Total Posts</p>
+                <p className="mt-2 text-sm text-gray-500">Points</p>
               </div>
             </div>
 

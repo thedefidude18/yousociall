@@ -334,14 +334,13 @@ export default function PostItem({ post }) {
   {post.count_replies || 0} 
 </button>
 
- <div className="flex items-center group">
-              <button className="group flex items-center space-x-2 text-gray-500 hover:text-yellow-500">
-                <span className="text-sm font-medium">
-                  {post.points || 0} Points
-                </span>
-              </button>
-            </div>
-
+<div className="flex items-center group">
+    <button className="group flex items-center space-x-2 text-gray-500 hover:text-yellow-500">
+      <span className="text-sm font-medium">
+        {post.points || 0} Points
+      </span>
+    </button>
+  </div>
                 <button
                   className="flex items-center hover:text-gray-700"
                   onClick={handleShare}

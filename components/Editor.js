@@ -3,7 +3,8 @@ import TextareaAutosize from 'react-textarea-autosize';
 import { useOrbis } from '@orbisclub/components';
 import { LoadingCircle } from './Icons';
 import { getIpfsLink, sleep } from '../utils';
-import { HiLink, HiCode, HiPhotograph } from 'react-icons/hi'; // Icons from react-icons
+import { HiLink, HiCode, HiPhotograph, HiSparkles } from 'react-icons/hi'; // Added HiSparkles for AI icon
+import { POINTS_RULES } from '../config/points';
 
 const Editor = ({ post, onPostCreated }) => {
   const { orbis, user } = useOrbis();
@@ -14,6 +15,7 @@ const Editor = ({ post, onPostCreated }) => {
   const [category, setCategory] = useState(post?.content?.context || '');
   const [status, setStatus] = useState(0);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isAILoading, setIsAILoading] = useState(false); // State for AI loading
   const dropdownRef = useRef(null);
   const textareaRef = useRef();
 
@@ -82,6 +84,61 @@ const Editor = ({ post, onPostCreated }) => {
     setMediaLoading(false);
   };
 
+  // Function to generate post content using OpenAI
+  const generatePostWithAI = async () => {
+    if (!user) {
+      alert('You must be connected to use this feature.');
+      return;
+    }
+
+    setIsAILoading(true);
+
+    try {
+      // Call the OpenAI API to generate content
+      const prompt = "Write a short post about building in web3.";
+      const response = await fetch('/api/generate-post', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate post');
+      }
+
+      const { content } = await response.json();
+
+      // Set the generated content in the editor
+      setBody(content);
+    } catch (error) {
+      console.error('Error generating post:', error);
+      alert('Failed to generate post. Please try again.');
+    } finally {
+      setIsAILoading(false);
+    }
+  };
+
+  // Function to award points
+  async function awardPoints(did, points) {
+    try {
+      const response = await fetch('/api/award-points', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ did, points }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to award points');
+      }
+    } catch (error) {
+      console.error('Error awarding points:', error);
+    }
+  }
+
   async function updateArticle() {
     if (!category) {
       alert('Please select a category');
@@ -108,6 +165,11 @@ const Editor = ({ post, onPostCreated }) => {
         context: category,
         media: media,
       });
+
+      // Award points for creating a post
+      if (res.status === 200 && user) {
+        await awardPoints(user.did, POINTS_RULES.CREATE_POST);
+      }
     }
 
     console.log('Post creation/edit response:', res); // Debugging log
@@ -164,6 +226,14 @@ const Editor = ({ post, onPostCreated }) => {
         {/* Toolbar */}
         <div className="mt-4 flex items-center justify-between border-t border-gray-100 pt-3">
           <div className="flex items-center space-x-2">
+            {/* AI Button */}
+            <ToolbarIconButton
+              onClick={generatePostWithAI}
+              loading={isAILoading}
+            >
+              <HiSparkles className="w-5 h-5" /> {/* AI Icon */}
+            </ToolbarIconButton>
+
             <ToolbarIconButton
               onClick={addImage}
               isImage={true}
